@@ -1,0 +1,49 @@
+#include "G4VUserEventInformation.hh"
+#include "G4ThreeVector.hh"
+#include "globals.hh"
+
+#ifndef G1UserEventInformation_h
+#define G1UserEventInformation_h 1
+
+class G1UserEventInformation : public G4VUserEventInformation
+{
+public:
+   G1UserEventInformation();
+  ~G1UserEventInformation();
+  
+  inline void Print() const{};
+
+  void IncPhotonCount_Scint() { photonCount_Scint++; }
+  void IncPhotonCount_Ceren() { photonCount_Ceren++; }
+  
+  void IncAbsorption() { absorptionCount++; }
+  
+
+  
+
+  G4int GetPhotonCount_Scint() const { return photonCount_Scint; }
+  G4int GetPhotonCount_Ceren() const { return photonCount_Ceren; }
+  
+  
+
+  
+
+  //Gets the total optical photon count produced
+  G4int GetPhotonCount() { return photonCount_Scint+photonCount_Ceren; }
+
+private:
+
+  
+  G4int photonCount_Scint;
+  G4int photonCount_Ceren;
+ 
+
+  
+
+  
+
+};
+
+#endif
+
+

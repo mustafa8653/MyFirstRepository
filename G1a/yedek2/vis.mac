@@ -1,0 +1,159 @@
+# Use this open statement to create an OpenGL view:
+
+
+
+/vis/open OGL 600x600-0+0
+
+#
+# Use this open statement to create a .prim file suitable for
+# viewing in DAWN:
+#/vis/open DAWNFILE
+#
+# Use this open statement to create a .heprep file suitable for
+# viewing in HepRApp:
+#/vis/open HepRepFile
+#
+# Use this open statement to create a .wrl file suitable for
+# viewing in a VRML viewer:
+#/vis/open VRML2FILE
+#
+
+# Disable auto refresh and quieten vis messages whilst scene and
+# trajectories are established:
+
+
+
+# Disable auto refresh and quieten vis messages whilst scene and
+# trajectories are established:
+/vis/viewer/set/autoRefresh false
+/vis/verbose errors
+
+# Draw geometry:
+/vis/drawVolume
+# Specify view angle:
+/vis/viewer/set/viewpointThetaPhi 120 150
+
+# Specify zoom value:
+/vis/viewer/zoom 2.5
+#
+
+#bu satırla görüntüyü kaydetmek için
+#/vis/open OGLSX 
+# Specify view angle:
+#/vis/viewer/set/viewpointThetaPhi 120 150
+# Camera setting
+#/vis/drawVolume 
+#/vis/viewer/flush
+# set print mode to vectored
+#/vis/ogl/set/printMode vectored
+# set print size larger than screen
+#/vis/ogl/set/printSize 2000 2000
+# print
+#/vis/ogl/printEPS
+
+
+
+
+
+
+
+
+
+
+# Specify style (surface or wireframe):
+#/vis/viewer/set/style wireframe
+
+#
+# Draw coordinate axes:
+/vis/scene/add/axes 0 0 0 1 m
+#
+
+
+
+
+# Attach text to one edge of Shape1, with a small, fixed offset
+#/vis/scene/add/text 0 6 -4 cm 18 4 4 bed
+# Attach text to one corner of Shape2, with a small, fixed offset
+#/vis/scene/add/text 6 7 10 cm 18 4 4 Bc-400
+
+
+
+
+
+# Draw smooth trajectories at end of event, showing trajectory points
+
+/vis/scene/add/trajectories smooth
+# test ismini ben verdim default değeri drawByCharge-0
+/vis/modeling/trajectories/create/drawByCharge test
+
+#default değer değiştiriliyor..+1 yükler red, -1 yükler blue,yüksüzler white gözüküyor
+/vis/modeling/trajectories/test/set 1 red
+/vis/modeling/trajectories/test/set -1 blue
+/vis/modeling/trajectories/test/set 0 white
+
+# as markers 2 pixels wide:
+/vis/modeling/trajectories/test/default/setDrawStepPts true
+/vis/modeling/trajectories/test/default/setStepPtsSize 2
+
+
+#ne 1 ile 4 arasında değer alıyor..1 ve 4 dahil default 2
+/tracking/storeTrajectory 1
+
+
+# To get nice view
+#/vis/geometry/set/visibility World 0 true
+#/vis/geometry/set/visibility Target 0 true
+
+
+# (if too many tracks cause core dump => /tracking/storeTrajectory 0)
+
+
+
+
+#
+# Draw hits at end of event:
+#/vis/scene/add/hits
+#
+# To draw only gammas:
+#/vis/filtering/trajectories/create/particleFilter
+#/vis/filtering/trajectories/particleFilter-0/add gamma
+#
+# To invert the above, drawing all particles except gammas,
+# keep the above two lines but also add:
+#/vis/filtering/trajectories/particleFilter-0/invert true
+#
+
+
+
+
+
+
+# Many other options are available with /vis/modeling and /vis/filtering.
+# For example, to select colour by particle ID:
+#/vis/modeling/trajectories/create/drawByParticleID
+#/vis/modeling/trajectories/drawByParticleID-0/set e- blue
+#
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# To superimpose all of the events from a given run:
+/vis/scene/endOfEventAction accumulate
+#
+# Re-establish auto refreshing and verbosity:
+/vis/viewer/set/autoRefresh true
+/vis/verbose warnings
+
+#
+# For file-based drivers, use this to create an empty detector view:
+#/vis/viewer/flush
