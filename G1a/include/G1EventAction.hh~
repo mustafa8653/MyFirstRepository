@@ -60,6 +60,7 @@ class G1EventAction : public G4UserEventAction
   
   G4double fEdep;
   G4int fIndex;  
+  G4int fPmtPhotonCount;
     
    
     

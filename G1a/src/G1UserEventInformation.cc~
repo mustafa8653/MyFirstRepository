@@ -30,13 +30,16 @@
 //
 //
 #include "G1UserEventInformation.hh"
-
+#include <iomanip>
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G1UserEventInformation::G1UserEventInformation() : fPhotonCount_Scint(0), fPhotonCount_Ceren(0) , fEdep(0)
+G1UserEventInformation::G1UserEventInformation( G4int eventID) : fPhotonCount_Scint(0), fPhotonCount_Ceren(0) , fEdep(0.)
   {
   
+  fEventID = eventID;
+  
   fProcessMap = new std::map < G4int, G4int>();
+  fPhotonEnergyVec = new std::vector <G4double> ();
   
   (*fProcessMap)[0]=0; //Undefinied
   (*fProcessMap)[1]=0; //Transmission
@@ -59,23 +62,51 @@ G1UserEventInformation::G1UserEventInformation() : fPhotonCount_Scint(0), fPhoto
 G1UserEventInformation::~G1UserEventInformation() {
 
 delete fProcessMap;
+delete fPhotonEnergyVec;
 }
 
 
-void G1UserEventInformation::PrintProcessNumber() 
+
+void G1UserEventInformation::PrintEventResult()
 {
 
 
+G4cout<<"-------------------------------------------------"<<G4endl;
+
+G4cout<<" \n Event "<<fEventID<<" Statistic: "<<G4endl;
+
+G4cout<<"Deposited energy in this event: "<< std::setprecision(3) <<G4BestUnit(fEdep ,"Energy") <<G4endl;
+
+G4cout<<"# of Scintillation photons: "<< fPhotonCount_Scint <<G4endl;
+
+G4cout<<"# of Cherenkov photons : "<< fPhotonCount_Ceren <<G4endl;
+
+G4cout<< " # of total (scin + cheren ) photons :  "<< fPhotonCount_Ceren + fPhotonCount_Scint <<G4endl;
+
+G4cout<<" # of detected photons from pmt surface :  "<< GetPmtPhotonCount() <<G4endl; 
+    
+G4cout<<"---OpticalBoundaryProcess statistic---"<<G4endl;
 for( std::map<const G4int, G4int>::iterator ii=fProcessMap->begin(); ii!=fProcessMap->end(); ++ii)
 
-   {
-       //küçükten büyüğe doğru sıralıyor std::map(index numarası)
+   	{
+       //küçükten büyüğe doğru sıralıyor std::map(index numarasına göre)
        G4cout << (*ii).first << ": " << (*ii).second << G4endl;
 
-   }
+   	}
+   
+G4cout<<"------Photon PrimaryVertex Energy-------"<<G4endl;
+G4cout<<"# of total photon in this event: "<<fPhotonEnergyVec->size()<<G4endl;
 
+for (unsigned int i=0; i< fPhotonEnergyVec->size(); i++) //fPhotonEnergyVec->size() unsigned olduğu için mecbure unsigned olmalı i
+	{
+         G4cout<<i<<": "<<(*fPhotonEnergyVec)[i]<<G4endl;
+	}   
 
+G4cout<<"-------------------------------------------------"<<G4endl;
 
 }
+
+
+
 
 

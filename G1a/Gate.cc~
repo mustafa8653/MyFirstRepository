@@ -40,7 +40,7 @@
 //     
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifdef G4MULTITHREADEDsto
+#ifdef G4MULTITHREADED
 #include "G4MTRunManager.hh"
 #else
 #include "G4RunManager.hh"
@@ -89,6 +89,7 @@ int main(int argc,char** argv)
   G4String session;
 #ifdef G4MULTITHREADED
   G4int nThreads = 0;
+  G4cout<<"Mulithread tanımlıdır: "<<" nThreads: "<<nThreads<<G4endl;
 #endif
 
   G4long myseed = 345354;
@@ -99,6 +100,7 @@ int main(int argc,char** argv)
 #ifdef G4MULTITHREADED
      else if ( G4String(argv[i]) == "-t" ) {
                     nThreads = G4UIcommand::ConvertToInt(argv[i+1]);
+                    G4cout<<" Kullanıcıdan gelen nThread:  "<<nThreads<<G4endl;
     }
 #endif
     else {
@@ -112,12 +114,13 @@ int main(int argc,char** argv)
   G4Random::setTheEngine(new CLHEP::RanecuEngine);
 
   // Construct the default run manager
-  //
+  //When the number of threads is not selected in the application, the default number (which is actually 2) will be used. Another number of threads can be set in several ways:
 #ifdef G4MULTITHREADED
   G4MTRunManager * runManager = new G4MTRunManager;
   if ( nThreads > 0 ) runManager->SetNumberOfThreads(nThreads);
 #else
   G4RunManager * runManager = new G4RunManager;
+  G4cout<<"Mulithread tanımlı değildir. "<<G4endl;
 #endif
 
   // Seed the random number generator manually

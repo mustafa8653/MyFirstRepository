@@ -5,16 +5,34 @@
 # in interactive session
 #
 # Set some default verbose
-/control/verbose 0
+/control/verbose 1
 /control/saveHistory
+
+# Sends G4cout stream to a per-thread file
+/control/cout/setCoutFile dosyaismi
+
+#worker yazılarını saklama işi..to buffer the output from each thread at a time, so that the output of each thread is grouped and printed at the #end of the job
+#/control/cout/useBuffer false
+
+#to limit the output from threads to one selected thread only:
+#/control/cout/ignoreThreadsExcept 0
+
+#to redirect the output from threads in a file:
+#/control/cout/setCoutFile coutFileName
+#/control/cout/setCerrFile cerrFileName
+
 /tracking/verbose -1
 /run/verbose 1
 
-# Change the default number of threads (in multi-threaded mode)
-/run/numberOfThreads 2
+# Change the default number of threads(default 2) (in multi-threaded mode), in a macro file via UI command added just before /run/initialize
+#/run/numberOfThreads 4
 
-/G1/phys/verbose 0
-
+#/G1/phys/verbose 1
+#/G/det/dimensions 60 70 80
+#/G/det/resolutionScale 0.8
+#/G/det/reflectivity 0.7
+#/G/det/type 4
+#/G/det/sigmaAlpha 0.2
 #
 
 #

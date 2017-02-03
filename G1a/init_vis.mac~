@@ -7,8 +7,7 @@
 /tracking/verbose -1
 /run/verbose 1
 
-# Change the default number of threads (in multi-threaded mode)
-/run/numberOfThreads 2
+
 
 /G1/phys/verbose 0
 
@@ -18,7 +17,7 @@
 # Initialize kernel
 /run/initialize
 
-/run/beamOn 1
+#/run/beamOn 5
 #
 # Visualization setting
-#/control/execute vis.mac
+/control/execute vis.mac

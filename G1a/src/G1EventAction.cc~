@@ -41,10 +41,11 @@
 #include "G1UserEventInformation.hh"
 
 #include "HistoManager.hh" 
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 G1EventAction::G1EventAction(G1RunAction *runAction, HistoManager* histo)
-: G4UserEventAction(), fRunAction(runAction), fHistoManager(histo), fEdep(0.), fIndex(0.)
+: G4UserEventAction(), fRunAction(runAction), fHistoManager(histo), fEdep(0.), fIndex(0), fPmtPhotonCount(0)
 {
 
 
@@ -59,58 +60,89 @@ G1EventAction::~G1EventAction()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void G1EventAction::BeginOfEventAction(const G4Event*)
+void G1EventAction::BeginOfEventAction(const G4Event* anEvent)
 {
 
 
-G4cout<<"BeginOfEventAction started"<<G4endl;
+G4int eventID = anEvent->GetEventID();
+//G4cout<<"BeginOfEventAction started"<<G4endl;
 
 //fpEventManager->SetUserInformation(new G1UserEventInformation); //fpEventManager protected attributes in G4UserEventAction class
-G4EventManager::GetEventManager()->SetUserInformation(new G1UserEventInformation);
+G4EventManager::GetEventManager()->SetUserInformation( new G1UserEventInformation ( eventID ));
 //anEvent->SetUserInformation(new G1UserEventInformation); bu olmaz cünkü const yetkisi yok
 
 fEdep = 0.;
-fIndex = 0;
+fIndex = fPmtPhotonCount = 0;
 
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void G1EventAction::EndOfEventAction(const G4Event* anEvent)
+void G1EventAction::EndOfEventAction (const G4Event* anEvent)
 {
-  G4cout<<"EndOfEventAction started"<<G4endl;
+     // G4cout<<"EndOfEventAction started"<<G4endl;
 
-
-
-    G1UserEventInformation* eventInformation
-    =(G1UserEventInformation*)anEvent->GetUserInformation();
+   /* if( anEvent->IsAborted() == true ) return; */
+    
+    G1UserEventInformation* eventInformation = (G1UserEventInformation*)anEvent->GetUserInformation();
+    
+   //eventInformation->PrintEventResult();
+    
     
     fEdep = eventInformation->GetEdep();
+    fPmtPhotonCount = eventInformation->GetPmtPhotonCount();
     
-   // eventInformation->PrintProcessNumber();
+    if(fEdep == 0 && fPmtPhotonCount == 0 ) return;
+    std::vector< double> pev = *(eventInformation->GetPhotonEnergyVec());
+    
+    
+    
+    
+    fHistoManager->FillNtuple1(fEdep, fPmtPhotonCount);
+    fHistoManager->FillNtuple3(pev);
+    
     
     fRunAction->fillPerEvent(fEdep, fIndex);
     
-    fHistoManager->FillHisto(0,fEdep);
+    fHistoManager->FillHisto(0, fEdep);
+    fHistoManager->FillHisto(2,fPmtPhotonCount);
     
-    fHistoManager->FillNtuple1(fEdep);
     
-   for( std::map< G4int, G4int>::iterator ii=eventInformation->GetProcessMap()->begin(); ii!=eventInformation->GetProcessMap()->end(); ++ii)
+    
+   for( std::map< G4int, G4int>::iterator ii = eventInformation->GetProcessMap()->begin(); ii != eventInformation->GetProcessMap()->end(); ++ii)
 
    {
 
    // G4cout << (*ii).first << ": " << (*ii).second << G4endl;
        
-       G4int index= (*ii).first;
-       G4int weight=(*ii).second;
+       G4int index = (*ii).first;
+       G4int weight = (*ii).second;
        
        
-        fHistoManager->FillHisto (1, index, weight);
+        //fHistoManager->FillHisto (1, index, weight);
         
-  }
+            
+          for(G4int i=0; i< weight; i++)
+          {
+           
+              
+              fHistoManager->FillNtuple2(index);     
+              fHistoManager->FillHisto(1,index);   
+              
+           
+           }
+        
+        
+        
+        
+   }
   
   
   
+              
+              
+              
+        
   
  
     

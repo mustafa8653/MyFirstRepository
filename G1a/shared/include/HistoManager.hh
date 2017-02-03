@@ -23,27 +23,24 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-/// \file analysis/AnaEx02/include/HistoManager.hh
+/// \file analysis/AnaEx01/include/HistoManager.hh
 /// \brief Definition of the HistoManager class
 //
-// $Id: HistoManager.hh 92322 2015-08-27 14:54:05Z gcosmo $
-// GEANT4 tag $Name: geant4-09-04 $
 //
+// $Id: HistoManager.hh 92318 2015-08-27 14:49:47Z gcosmo $
+// 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo...... 
 
 #ifndef HistoManager_h
 #define HistoManager_h 1
 
 #include "globals.hh"
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-class TFile;
-class TTree;
-class TH1D;
-
-const G4int MaxHisto = 2;
+#include "g4root.hh"
+//#include "g4csv.hh"
+//#include "g4xml.hh"
+//#include "g4hbook.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -52,26 +49,22 @@ class HistoManager
   public:
     HistoManager();
    ~HistoManager();
-   
+
     void Book();
     void Save();
-
-    void FillHisto(G4int ih, G4double xbin , G4double weight = 1.0);
-    //void Normalize(G4int id, G4double fac);    
-
-    void FillNtuple1(G4double edep);
-    void FillNtuple2(G4double index);
     
-    void PrintStatistic();
-        
+    
+    void FillHisto(G4int ih, G4double xbin , G4double weight = 1.0);
+    
+    void FillNtuple1(G4double edep, G4int pfc);
+    void FillNtuple2(G4int index);
+    void FillNtuple3(std::vector< double > &vector);
+    
+   // void PrintStatistic();        
+    
   private:
-    TFile*   fRootFile;
-    TH1D*    fHisto[MaxHisto];            
-    TTree*   fNtuple1;    
-    TTree*   fNtuple2;    
-
-    G4double fEdep;
-    G4double fIndex;
+    G4bool fFactoryOn;   
+    std::vector< double > v; 
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

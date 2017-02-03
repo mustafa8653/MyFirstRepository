@@ -46,7 +46,7 @@
 
 G1StackingAction::G1StackingAction()
   : G4UserStackingAction(),
-    fScintillationCounter(0), fCerenkovCounter(0),fPhotonCounter(0),fElectronCounter(0)
+    fScintillationCounter(0), fCerenkovCounter(0), fPhotonCounter(0), fElectronCounter(0)
 {}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -146,7 +146,8 @@ if(aTrack->GetDefinition() == G4Electron::ElectronDefinition())
   { // particle is optical photon
   fPhotonCounter++;
   
-   //G4cout << "Photon Track id: " <<aTrack->GetTrackID()<< G4endl;
+   eventInformation->GetPhotonEnergyVec()->push_back( aTrack->GetTotalEnergy() );
+   
    
     if(aTrack->GetParentID()>0)
     { // particle is secondary
@@ -156,11 +157,14 @@ if(aTrack->GetDefinition() == G4Electron::ElectronDefinition())
       {
         fScintillationCounter++;
         eventInformation->IncPhotonCount_Scint();
-        }
-      if(aTrack->GetCreatorProcess()->GetProcessName() == "Cerenkov"){
+      }
+      if(aTrack->GetCreatorProcess()->GetProcessName() == "Cerenkov")
+      {
         fCerenkovCounter++;
         eventInformation->IncPhotonCount_Ceren();
-        }
+      }
+      
+      
     }
     
     
@@ -183,7 +187,8 @@ if(aTrack->GetDefinition() == G4Electron::ElectronDefinition())
 void G1StackingAction::NewStage()
 {
 
-G4cout << "NewStage Started" << G4endl;
+//G4cout << "NewStage Started" << G4endl;
+ /*
   G4cout << "Number of Scintillation photons produced in this event : "
          << fScintillationCounter << G4endl;
   G4cout << "Number of Cerenkov photons produced in this event : "
@@ -193,6 +198,7 @@ G4cout << "NewStage Started" << G4endl;
          << fPhotonCounter << G4endl; 
          
          G4cout << "Number of Secondary electrons produced from Gamma : "<< fElectronCounter << G4endl;
+*/
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -200,7 +206,7 @@ G4cout << "NewStage Started" << G4endl;
 //Reset priority control.beginofEventAction dan önce calsıyor
 void G1StackingAction::PrepareNewEvent()
 {
-G4cout << "PrepareNewEvent Started" << G4endl;
+//G4cout << "PrepareNewEvent Started" << G4endl;
   fScintillationCounter = 0;
   fCerenkovCounter = 0;
   fElectronCounter= 0;

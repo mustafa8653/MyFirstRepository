@@ -31,6 +31,7 @@
 #ifndef G1ActionInitialization_h
 #define G1ActionInitialization_h 1
 
+//tek değişiklik bu
 #include "G4VUserActionInitialization.hh"
 
 //bu satır neden var

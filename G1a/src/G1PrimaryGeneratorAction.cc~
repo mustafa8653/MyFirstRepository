@@ -66,7 +66,7 @@ G1PrimaryGeneratorAction::G1PrimaryGeneratorAction()
   fParticleGun->SetParticleDefinition(particle);
   fParticleGun->SetParticleTime(0.0*ns);
   
-  
+  //fParticleGun->SetParticleEnergy(1115.546*keV);
   fParticleGun->SetParticleEnergy(1115.546*keV);
   
   

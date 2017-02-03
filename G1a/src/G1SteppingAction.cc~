@@ -56,6 +56,7 @@
 #include "G4EventManager.hh"
 #include "G1UserEventInformation.hh"
 
+#include "G4UImanager.hh"
 
 #include "HistoManager.hh"
 
@@ -78,12 +79,24 @@ G1SteppingAction::~G1SteppingAction()
 void G1SteppingAction::UserSteppingAction(const G4Step* step)
 {
 
-fEventInformation = (G1UserEventInformation*)G4EventManager::GetEventManager()->GetUserInformation();
-
-if(step->GetTrack()->GetDefinition()==G4Gamma::GammaDefinition()) 
+ 
+      
+ fEventInformation = (G1UserEventInformation*)G4EventManager::GetEventManager()->GetUserInformation();
+ 
+ 
+ if( step->GetTrack()->GetParentID() ==0 ) //Primary particle 
 {
-      if(step->GetPostStepPoint()->GetStepStatus()==fGeomBoundary) //son adım track ediliyor
-      step->GetTrack()->SetTrackStatus(fStopAndKill);
+
+          /*
+	if( step->IsFirstStepInVolume() == true && step->GetPostStepPoint()->GetStepStatus() == fGeomBoundary ) 
+        	G4RunManager::GetRunManager()->AbortEvent();
+            */          
+                        
+       
+       
+       
+        if(step->GetPostStepPoint()->GetStepStatus()==fGeomBoundary) //son adım track ediliyor
+      		step->GetTrack()->SetTrackStatus(fStopAndKill);
 }
 
 
@@ -160,12 +173,15 @@ G4OpticalSurface *opAluSurface = dynamic_cast < G4OpticalSurface* >
          G4VPhysicalVolume* p2 =  step->GetPostStepPoint()->GetPhysicalVolume(); 
          
          
-                 if( (p1==physBc && p2==physWorld) || (p1==physWorld && p2==physBc) ) 
+                 if( (p1==physBc && p2==physWorld) || ( p1==physWorld && p2==physBc )  ) 
                  {
                  
-                 G4OpBoundaryProcess* boundary = (G4OpBoundaryProcess*)vp; 
-                 G4OpBoundaryProcessStatus status = boundary->GetStatus(); 
-         	 CountProcess(status);
+		         G4OpBoundaryProcess* boundary = (G4OpBoundaryProcess*)vp; 
+		         G4OpBoundaryProcessStatus status = boundary->GetStatus(); 
+                 	 //if(status==2) 
+                	 // step->GetTrack()->SetTrackStatus(fStopAndKill);
+         		 
+         		 CountProcess(status);
          	 
                  }
     	
@@ -219,74 +235,71 @@ G4OpticalSurface *opAluSurface = dynamic_cast < G4OpticalSurface* >
   
 }
 
-void G1SteppingAction::CountProcess( G4int status ){
+void G1SteppingAction::CountProcess( G4int status )
+{
 
          
-   
-  
-   
-               switch(status){
+                switch(status){
 		case 0 :
 		 (*(fEventInformation->GetProcessMap()))[0]+=1;
-		 fHistoManager->FillNtuple2(0);
+		 
 		    break;
 		case 1 :
 		(*(fEventInformation->GetProcessMap()))[1]+=1;
-		fHistoManager->FillNtuple2(1.);
+		
 		   break;
 		case 2 :
 		(*(fEventInformation->GetProcessMap()))[2]+=1;
-		fHistoManager->FillNtuple2(2.);
+		
 		//G4cout <<"FresnelRefraction "<<G4endl;
 		
 		   break;
 		case 3 :
 		//G4cout <<"FresnelReflection "<<G4endl;
 		(*(fEventInformation->GetProcessMap()))[3]+=1;
-		fHistoManager->FillNtuple2(3.);
+		
 		break; 
 		
 	        case 4 :
 		//G4cout <<"TotalInternalReflection "<<G4endl;
 		(*(fEventInformation->GetProcessMap()))[4]+=1;
-		fHistoManager->FillNtuple2(4.);
+		
 		   break;  
 		case 5 :
 		//G4cout <<"LambertianReflection "<<G4endl;
 		(*(fEventInformation->GetProcessMap()))[5]+=1;
-		fHistoManager->FillNtuple2(5.);
+		
 		   break;  
 		case 6 :
 		
 		//G4cout <<"LobeReflection "<<G4endl;
 		(*(fEventInformation->GetProcessMap()))[6]+=1;
-		fHistoManager->FillNtuple2(6.);
+		
 		   break;
 		case 7 :
 		//G4cout <<"SpikeReflection "<<G4endl;
 		(*(fEventInformation->GetProcessMap()))[7]+=1;
-		fHistoManager->FillNtuple2(7.);
-		//G4cout<<"number SS: "<<fEventAction->CountProcessVector()->at(7);
+		
 		   break;
 		case 8 :
 		//G4cout <<"BackScattering"<<G4endl;
 		(*(fEventInformation->GetProcessMap()))[8]+=1;
-		fHistoManager->FillNtuple2(8.);
+		
 		   break;    
 		case 9 :
 		//G4cout <<"Absorption "<<G4endl;
 		(*(fEventInformation->GetProcessMap()))[9]+=1;
-		fHistoManager->FillNtuple2(9.);
+		
 		   break;   
 		case 10 :
 		//G4cout <<"Detection"<<G4endl;
 		(*(fEventInformation->GetProcessMap()))[10]+=1;
-		fHistoManager->FillNtuple2(10.);
+		
 		   break; 
 		case 13 :
 		//G4cout <<"StepTooSmall "<<G4endl;
 		(*(fEventInformation->GetProcessMap()))[13]+=1;
-		fHistoManager->FillNtuple2(13.);
+		
 		
 		   break; 
 		   

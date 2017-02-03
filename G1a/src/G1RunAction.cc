@@ -43,6 +43,8 @@
 #include "G4UnitsTable.hh"
 #include "G4SystemOfUnits.hh"
 
+#include "G1DetectorConstruction.hh"
+
 //....oooOO0OOooo................oooOO0OOooo........oooOO0OOooo......
 
 G1RunAction::G1RunAction(HistoManager* histo)
@@ -102,7 +104,7 @@ void G1RunAction::EndOfRunAction(const G4Run* run)
 
 G4cout << "EndOfRunAction Started" << G4endl;
 
-
+ 
 
 G4int nofEvents = run->GetNumberOfEvent();
   if (nofEvents == 0) return;
@@ -123,9 +125,11 @@ G4int nofEvents = run->GetNumberOfEvent();
   if (IsMaster()) {
     G4cout
      << G4endl
-     << "--------------------End of Global Runnn-----------------------";
+     << "--------------------End of Global Runnn-----------------------"<<G4endl;
      
-    
+    const G4VUserDetectorConstruction* vdc = G4RunManager::GetRunManager()->GetUserDetectorConstruction();
+    const G1DetectorConstruction* dc = static_cast<const G1DetectorConstruction*>(vdc);
+    dc->Print();
   }
   else {
     G4cout

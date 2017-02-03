@@ -66,8 +66,8 @@ G1PrimaryGeneratorAction::G1PrimaryGeneratorAction()
   fParticleGun->SetParticleDefinition(particle);
   fParticleGun->SetParticleTime(0.0*ns);
   
-  
-  fParticleGun->SetParticleEnergy(1115.546*keV);
+  //fParticleGun->SetParticleEnergy(1115.546*keV);
+  fParticleGun->SetParticleEnergy(1.2*MeV);
   
   
   fParticleGun->SetParticleMomentumDirection(G4ThreeVector(G4UniformRand(),G4UniformRand(),G4UniformRand()));
