@@ -1,0 +1,223 @@
+//
+// ********************************************************************
+// * License and Disclaimer                                           *
+// *                                                                  *
+// * The  Geant4 software  is  copyright of the Copyright Holders  of *
+// * the Geant4 Collaboration.  It is provided  under  the terms  and *
+// * conditions of the Geant4 Software License,  included in the file *
+// * LICENSE and available at  http://cern.ch/geant4/license .  These *
+// * include a list of copyright holders.                             *
+// *                                                                  *
+// * Neither the authors of this software system, nor their employing *
+// * institutes,nor the agencies providing financial support for this *
+// * work  make  any representation or  warranty, express or implied, *
+// * regarding  this  software system or assume any liability for its *
+// * use.  Please see the license in the file  LICENSE  and URL above *
+// * for the full disclaimer and the limitation of liability.         *
+// *                                                                  *
+// * This  code  implementation is the result of  the  scientific and *
+// * technical work of the GEANT4 collaboration.                      *
+// * By using,  copying,  modifying or  distributing the software (or *
+// * any work based  on the software)  you  agree  to acknowledge its *
+// * use  in  resulting  scientific  publications,  and indicate your *
+// * acceptance of all terms of the Geant4 Software license.          *
+// ********************************************************************
+//
+//
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+#include "G1StackingAction.hh"
+
+#include "G4VProcess.hh"
+
+#include "G4ParticleDefinition.hh"
+#include "G4ParticleTypes.hh"
+#include "G4Track.hh"
+#include "G4ios.hh"
+
+#include "G4Event.hh"
+#include "G4EventManager.hh"
+#include "G1UserEventInformation.hh"
+//#include "G4PVPlacement.hh"
+
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+G1StackingAction::G1StackingAction()
+  : G4UserStackingAction(), fElectronCounter(0)
+{}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+G1StackingAction::~G1StackingAction()
+{}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+
+//ClassifyNewTrack() method of UserStackingAction decides which stack each newly storing track to be stacked (or to be killed). By default, all tracks go to Urgent stack.
+
+
+//Invoked every time a new track is pushed into the stack, Classify a new track -- priority control,,,Urgent, Waiting, PostponeToNextEvent, Kil
+G4ClassificationOfNewTrack G1StackingAction::ClassifyNewTrack(const G4Track * aTrack)
+{
+
+//userstepping action icinde parcacıklar step step takip edilirken oluşan yeni parcacıklar buraya gönderiliyor..bir track verilerek
+
+//G4cout << "ClassifyNewTrack Started" << G4endl;
+
+const G4Event* anEvent = G4EventManager::GetEventManager()->GetConstCurrentEvent();
+G1UserEventInformation* eventInformation = (G1UserEventInformation*)anEvent->GetUserInformation(); 
+
+
+
+//Also, since tracks in the stack have not yet tracked, GetPosition(), GetMomentum() and GetKineticEnergy() return the values at the vertex, and these methods work for both primary and secondary tracks.
+
+//burada ki a aTrack sadece initial değerleri tutuyor.yani parcacık oluştuğu andaki konumu,hızı,enerjisi...yani henüz track edilmemiş..bir anlamda vertex değerlerini tutuyor.
+/*
+G4cout << "Particle Name: "<<aTrack->GetParticleDefinition()->GetParticleName ()  << G4endl;
+G4cout << "Track id: "<<aTrack->GetTrackID() << G4endl;
+G4cout << "Parent id: "<<aTrack->GetParentID() << G4endl;
+G4cout << "Track Position: "<<aTrack->GetPosition() << G4endl;
+G4cout << "GlobalTime: "<<aTrack->GetGlobalTime () << G4endl;
+G4cout << "LocalTime: "<<aTrack->GetLocalTime () << G4endl;
+G4cout << "Track KineticEnegy: "<<aTrack->GetKineticEnergy () << G4endl;
+G4cout << "Dynamic kinetic energy: "<<aTrack->GetDynamicParticle()->GetKineticEnergy ()  << G4endl;
+*/
+
+/*
+aTrack->GetVolume()
+This method aTrack->GetVolume() returns NULL in Stacking action for
+all of primaries, since these primaries have never been "tracked".
+This method should give a valid pointer for all secondaries. Please
+use this method only for secondaries.
+*/
+
+
+
+
+
+
+/*
+aTrack->GetVertexKineticEnergy() initial energy of track...vertex başlangıc oluyor
+
+GetVertexPosition(), GetVertexMomentum(), GetVertexKineticEnergy(),
+GetLogicalVolumeAtVertex() and GetCreatorProcess() are valid only
+for the secondary tracks. Also, since tracks in the stack have not
+yet tracked, GetPosition(), GetMomentum() and GetKineticEnergy()
+return the values at the vertex, and these methods work for both
+primary and secondary tracks.
+*/
+
+
+
+
+
+if(aTrack->GetDefinition() == G4Electron::ElectronDefinition())
+  { // particle is electron
+  
+  fElectronCounter++;
+      
+     // G4cout << "Electron track id:  " <<aTrack->GetTrackID()<< G4endl;
+     
+  /*
+    if(aTrack->GetVolume()->GetName()=="World")
+    {
+    G4cout<<" Track id  "<<aTrack->GetTrackID()<<" killed"<<G4endl;
+    return fKill;
+    }
+   
+   */
+   
+      
+    //return fWaiting;
+    
+  }
+
+
+  
+    
+
+
+
+  if(aTrack->GetDefinition() == G4OpticalPhoton::OpticalPhotonDefinition())
+  { // particle is optical photon
+  
+  
+ // eventInformation->GetPhotonEnergyVec()->push_back(aTrack->GetTotalEnergy() );
+   
+   
+    if( aTrack->GetParentID() > 0 )
+    { // particle is secondary
+    
+      //hangi process ile oluştu
+      if( aTrack->GetCreatorProcess()->GetProcessName() == "Scintillation" )
+      {
+        
+        
+       // eventInformation->GetScinOrCherVec()->push_back(0); 
+        
+        
+        
+        eventInformation->IncPhotonCount_Scint();
+      }
+      if( aTrack->GetCreatorProcess()->GetProcessName() == "Cerenkov" )
+      {
+      
+        
+        //eventInformation->GetScinOrCherVec()->push_back(1);
+              
+        
+        eventInformation->IncPhotonCount_Ceren();
+      }
+      
+      
+    }
+    
+    return fKill;
+    
+  }
+  
+  return fUrgent;
+  
+  
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+//1-Invoked when the Urgent stack becomes empty, 2-Change the classification criteria,,3-Event filtering (Event abortion)
+
+//Once Urgent stack becomes empty, all tracks in Waiting stack are transferred to Urgent stack And NewStage() method of UsetStackingAction is invoked.
+
+
+
+void G1StackingAction::NewStage()
+{
+
+//G4cout << "NewStage Started" << G4endl;
+ /*
+  G4cout << "Number of Scintillation photons produced in this event : "
+         << fScintillationCounter << G4endl;
+  G4cout << "Number of Cerenkov photons produced in this event : "
+         << fCerenkovCounter << G4endl;
+    
+   G4cout << "Number of total photons in this event: "
+         << fPhotonCounter << G4endl; 
+         
+         G4cout << "Number of Secondary electrons produced from Gamma : "<< fElectronCounter << G4endl;
+*/
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+//Reset priority control.beginofEventAction dan önce calsıyor
+void G1StackingAction::PrepareNewEvent()
+{
+//G4cout << "PrepareNewEvent Started" << G4endl;
+  
+  fElectronCounter= 0;
+  
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
